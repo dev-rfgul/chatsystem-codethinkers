@@ -18,7 +18,7 @@ export const registerUser = async (req, res) => {
 
         // Fallback dummy values if not provided
         if (!name) name = `User-${userUUID.slice(0, 8)}`;
-        if (!email) email = `user-${userUUID.slice(0,8)}@dummy.com`;
+        if (!email) email = `user-${userUUID.slice(0, 8)}@dummy.com`;
         if (!password) password = 'default-password';
 
         // Check if user with same email already exists
@@ -37,9 +37,9 @@ export const registerUser = async (req, res) => {
             isAdmin: isAdmin || false,
         });
 
-        res.status(201).json({ 
-            message: 'User registered successfully', 
-            user: { uuid: newUser.uuid, name: newUser.name, email: newUser.email } 
+        res.status(201).json({
+            message: 'User registered successfully',
+            user: { uuid: newUser.uuid, name: newUser.name, email: newUser.email }
         });
     } catch (err) {
         // console.log(err);
@@ -61,7 +61,7 @@ export const loginUser = async (req, res) => {
 
         const token = jwt.sign({ uuid: user.uuid, isAdmin: user.isAdmin }, JWT_SECRET, { expiresIn: '1h' });
 
-        res.json({ message: 'Login successful', token });
+        res.json({ message: 'Login successful', token, user });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }

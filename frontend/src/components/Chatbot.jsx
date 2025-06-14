@@ -53,8 +53,8 @@ const createUser = async () => {
             console.error('Error:', error);
         }
     };
-    const user = Cookies.getItem('user');
-    console.log(user);
+    // const user = Cookies.getItem('user');
+    // console.log(user);
     return (
         <div className="fixed bottom-6 right-6 z-50">
             {isOpen ? (

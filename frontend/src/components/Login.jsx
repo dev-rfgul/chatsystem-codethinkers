@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookies'
+
+
+
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const navigate = useNavigate()
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -18,26 +22,28 @@ const LoginPage = () => {
                 }
             );
 
-            console.log(response.data);
-
-            if (response.data.token) {
+            const data = response.data;
+            console.log(data)
+            if (data) {
                 console.log('Login successful!');
 
                 // Save token in localStorage
                 // localStorage.setItem('token', response.data.token);
-                Cookies.setItem('token', response.data.token, { expires: 30 })
-
-                // Optional: Redirect to dashboard or home
-                // navigate('/dashboard');
-            } else {
+                Cookies.setItem('token', data.token, { expires: 30 })
+                Cookies.setItem('user', JSON.stringify(data.user), { expires: 30 })
+                if (data.user.isAdmin === 'true') {
+                    navigate('/admin')
+                }
+            }
+            else {
                 console.log('Login failed: ' + response.data.message);
             }
         } catch (error) {
             console.error('Login error:', error.response?.data?.message || error.message);
         }
     };
-    const token = Cookies.getItem('token');
-    console.log(token);
+    // const token = Cookies.getItem('token');
+    // console.log(token);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-900 px-4">
