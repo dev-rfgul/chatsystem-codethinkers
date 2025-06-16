@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import messageRoutes from './routes/messageRoutes.js'
+import chatRoutes from './routes/chatRoute.js'
 const app = express();
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 })
 app.use('/user', userRoutes);
 app.use('/message',messageRoutes)
+app.use('/chat',chatRoutes)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })

@@ -22,27 +22,31 @@ const Admin = () => {
         }
     };
 
-    const fetchUserChat = async (userId) => {
+
+    console.log(selectedUser)
+    const fetchUserMessages = async (userID) => {
+        if (!userID) return; // this is the correct check
+
         try {
-            const token = Cookies.getItem('token');
-            const response = await axios.get(
-                `${import.meta.env.VITE_BACK_END_URL}/chat/${userId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            setChatMessages(response.data.messages);
+            const res = await axios.get(`${import.meta.env.VITE_BACK_END_URL}/message/${userID}`);
+            console.log(res.data);
+
+            const formattedMessages = res.data.message.map(msg => ({
+                content: msg.message,
+                sender: 'user', // assuming fetched messages are from user
+                timestamp: msg.createdAt || new Date().toISOString(),
+            }));
+            setChatMessages(formattedMessages);
         } catch (error) {
-            console.error('Error fetching chat:', error.message);
-            setChatMessages([]);
+            console.error("Failed to fetch messages", error);
         }
     };
 
+
+
     const handleUserClick = (user) => {
         setSelectedUser(user);
-        fetchUserChat(user._id);
+        fetchUserMessages(user._id)
         setNewMessage('');
     };
 
@@ -52,7 +56,7 @@ const Admin = () => {
         try {
             const token = Cookies.getItem('token');
             await axios.post(
-                `${import.meta.env.VITE_BACK_END_URL}/chat/${selectedUser._id}`,
+                `${import.meta.env.VITE_BACK_END_URL}/message/${selectedUser._id}`,
                 { content: newMessage },
                 {
                     headers: {
