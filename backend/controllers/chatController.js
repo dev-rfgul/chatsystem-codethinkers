@@ -5,7 +5,10 @@ import User from '../models/userModel.js';
 
 // @desc    Create or get one-to-one chat
 // replace with your actual admin user ID from MongoDB
-const ADMIN_USER_ID = '684fcdd6757e3b80d4904dea'; 
+const ADMIN_USER_ID = '684fcdd6757e3b80d4904dea';
+
+
+
 
 export const accessOrCreateChat = async (req, res) => {
   const { senderId } = req.body; // guest's ID
@@ -15,6 +18,7 @@ export const accessOrCreateChat = async (req, res) => {
   }
 
   try {
+    // Check if chat already exists
     let chat = await Chat.findOne({
       isGroupChat: false,
       participants: { $all: [senderId, ADMIN_USER_ID] },
@@ -22,8 +26,15 @@ export const accessOrCreateChat = async (req, res) => {
 
     if (chat) return res.status(200).json(chat);
 
+    // Create new chat
     const newChat = new Chat({ participants: [senderId, ADMIN_USER_ID] });
     const createdChat = await newChat.save();
+
+    // 🔄 Update the user's chatID
+  await User.findByIdAndUpdate(senderId, { chatID: createdChat._id }, { new: true });
+
+
+    // Fetch full chat with populated participants
     const fullChat = await Chat.findById(createdChat._id).populate('participants', '-password');
 
     res.status(201).json(fullChat);
@@ -31,8 +42,6 @@ export const accessOrCreateChat = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-
 // @desc    Get all chats for logged-in user
 export const fetchChats = async (req, res) => {
   try {
@@ -63,7 +72,7 @@ export const getChatMessages = async (req, res) => {
     const messages = await Message.find({ chatID: chatId })
       .populate('userID', 'name email isAdmin')
       .sort({ createdAt: 1 });
-    
+
     res.status(200).json(messages);
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -105,27 +105,60 @@
 // controllers/messageController.js
 import Message from '../models/messageModel.js';
 import Chat from '../models/chatModel.js';
+import User from '../models/userModel.js';
 
-// @desc Send a new message
+// // @desc Send a new message
+// export const sendMessage = async (req, res) => {
+//   const { chatID, message, senderType, userID } = req.body;
+
+//   try {
+//     const newMessage = new Message({
+//       chatID,
+//       userID: userID || null, // use provided userID or null for guest
+//       message,
+//       senderType,
+//     });
+
+//     const savedMessage = await newMessage.save();
+
+//     await Chat.findByIdAndUpdate(chatID, { lastMessage: savedMessage._id });
+
+//     const populatedMsg = await savedMessage.populate('userID', 'name email');
+
+//     res.status(201).json(populatedMsg);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
 export const sendMessage = async (req, res) => {
   const { chatID, message, senderType, userID } = req.body;
 
   try {
     const newMessage = new Message({
       chatID,
-      userID: userID || null, // use provided userID or null for guest
+      userID: userID || null,
       message,
       senderType,
     });
 
     const savedMessage = await newMessage.save();
 
+    // Update chat with the last message
     await Chat.findByIdAndUpdate(chatID, { lastMessage: savedMessage._id });
+
+    // Update user's message list (optional)
+    if (userID) {
+      await User.findByIdAndUpdate(userID, {
+        $push: { message: { message: savedMessage._id } }
+      });
+    }
 
     const populatedMsg = await savedMessage.populate('userID', 'name email');
 
     res.status(201).json(populatedMsg);
   } catch (err) {
+    console.log(err)
     res.status(500).json({ message: err.message });
   }
 };

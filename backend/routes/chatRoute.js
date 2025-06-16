@@ -9,14 +9,14 @@ import {
   sendMessage,
   getAllMessages,
 } from '../controllers/messageController.js';
-import { protect } from '../middleware/authMiddleware.js'; // Auth middleware
+// import { protect } from '../middleware/authMiddleware.js'; // Auth middleware
 
 const router = express.Router();
 
 // Chat Routes
 router.post('/chat',  accessOrCreateChat);
-router.get('/chats', protect, fetchChats);
-router.get('/chat/:chatId/messages', protect, getChatMessages);
+router.get('/chats',  fetchChats);
+router.get('/chat/:chatId/messages', getChatMessages);
 
 // Message Routes
 router.post('/message', sendMessage);

@@ -7,14 +7,18 @@ const userSchema = new mongoose.Schema({
     email: { type: String, unique: true, },
     password: String,
     isAdmin: { type: Boolean, default: false },
-    message:[
+    message: [
         {
-            message:{
-                type:mongoose.Schema.Types.ObjectId,
-                ref:"Message"
+            message: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Message"
             }
         }
-    ]
+    ],
+    chatID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Chat'
+    }
 })
 const User = mongoose.model('User', userSchema);
 export default User;
