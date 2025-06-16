@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import MessageModel from '../models/messageModel.js';
 import UserModel from '../models/userModel.js'
 
@@ -26,14 +27,23 @@ export const createMessage = async (req, res) => {
 };
 
 //get msg of a user
+// import mongoose from "mongoose";
+
 export const getMessageByUserID = async (req, res) => {
-    const { userID } = req.params;
-    const message = await MessageModel.find({ userID }).select('message')
-    if (!message) {
-        return res.status(404).json({ error: "message not found" })
+    try {
+        const userID = req.params.id;
+        console.log(userID)
+        const message = await MessageModel.find({ userID }).select('message');
+        
+        if (!message || message.length === 0) {
+            return res.status(404).json({ error: "No messages found" });
+        }
+
+        res.status(200).json({ message });
+    } catch (err) {
+        res.status(500).json({ error: "Invalid userID or internal error" });
     }
-    res.status(200).json({ message })
-}
+};
 
 // Get a single message by ID
 export const getMessageById = async (req, res) => {

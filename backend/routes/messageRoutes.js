@@ -1,7 +1,6 @@
 import express from 'express';
 import {
     createMessage,
-    getMessageById,
     updateMessage,
     deleteMessage,
     getMessageByUserID
