@@ -3,6 +3,7 @@ import User from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
+// import { accessOrCreateChat } from './chatController.js';
 
 // Secret key for JWT (store in environment variables in production)
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
