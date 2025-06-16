@@ -1,5 +1,5 @@
 import MessageModel from '../models/messageModel.js';
-import UserModel  from '../models/userModel.js'
+import UserModel from '../models/userModel.js'
 
 // Create a new message
 export const createMessage = async (req, res) => {
@@ -21,11 +21,19 @@ export const createMessage = async (req, res) => {
         res.status(201).json(savedMessage);
     } catch (error) {
         console.log(error)
-        res.status(500).json({ error: 'Error creating message.',error });
+        res.status(500).json({ error: 'Error creating message.', error });
     }
 };
 
-
+//get msg of a user
+export const getMessageByUserID = async (req, res) => {
+    const { userID } = req.params;
+    const message = await MessageModel.find({ userID }).select('message')
+    if (!message) {
+        return res.status(404).json({ error: "message not found" })
+    }
+    res.status(200).json({ message })
+}
 
 // Get a single message by ID
 export const getMessageById = async (req, res) => {

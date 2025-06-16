@@ -4,7 +4,7 @@ import {
   registerUser,
   loginUser,
   getAllUsers,
-  getUserByUUID,
+  getUserByID,
   updateUser,
   deleteUser
 } from '../controllers/userController.js';
@@ -14,7 +14,7 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/getAllUsers', getAllUsers);
-router.get('/:uuid', getUserByUUID);
+router.get('/:userID', getUserByID);
 router.put('/:uuid', updateUser);
 router.delete('/:uuid', deleteUser);
 

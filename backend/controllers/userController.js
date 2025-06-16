@@ -79,11 +79,14 @@ export const getAllUsers = async (req, res) => {
 };
 
 // Get user by UUID
-export const getUserByUUID = async (req, res) => {
+export const getUserByID = async (req, res) => {
     try {
-        const { uuid } = req.params;
-        const user = await User.findOne({ uuid }).select('-password');
+        const { userID } = req.params;
+        console.log(userID)
+        const user = await User.findById(userID).select('-password');
+        console.log(user)
         if (!user) return res.status(404).json({ message: 'User not found' });
+        console.log(user)
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
