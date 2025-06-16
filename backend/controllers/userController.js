@@ -35,11 +35,12 @@ export const registerUser = async (req, res) => {
             email,
             password: hashedPassword,
             isAdmin: isAdmin || false,
+            
         });
 
         res.status(201).json({
             message: 'User registered successfully',
-            user: { uuid: newUser.uuid, name: newUser.name, email: newUser.email }
+            user: { uuid: newUser.uuid, name: newUser.name, email: newUser.email,userID:newUser._id }
         });
     } catch (err) {
         // console.log(err);

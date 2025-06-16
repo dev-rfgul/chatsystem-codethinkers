@@ -12,49 +12,59 @@ const ChatPopup = () => {
     const inputRef = useRef(null);
 
 
-const createUser = async () => {
-    const user = Cookies.getItem('user'); // ✅ get cookie using js-cookie
 
-    if (!user) {
-        try {
-            const response = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/user/register`, {});
-            console.log(response.data);
+    const createUser = async () => {
+        const user = Cookies.getItem('user'); // ✅ get cookie using js-cookie
 
-            // Optionally set cookie after successful register
-            Cookies.setItem('user', JSON.stringify(response.data.user), { expires: 7 }); // expires in 7 days
-        } catch (error) {
-            console.error("Registration failed", error);
+        if (!user) {
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_BACK_END_URL}/user/register`, {});
+                console.log(response.data);
+
+                // Optionally set cookie after successful register
+                Cookies.setItem('user', JSON.stringify(response.data.user), { expires: 7 }); // expires in 7 days
+            } catch (error) {
+                console.error("Registration failed", error);
+            }
+        } else {
+            console.log("User already exists in cookie:", user);
         }
-    } else {
-        console.log("User already exists in cookie:", user);
-    }
-};
+    };
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    const handleSend = async (e) => {
-        e.preventDefault();
-        if (!userQuery.trim()) return;
+    const user = JSON.parse(Cookies.getItem('user'));
+    console.log("User from cookie:", user.userID); // ✅ Correctly parse the cookie to get user data
+    // console.log(user)
 
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/pattern-match`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: userQuery }),
-            });
-            console.log(response)
-            const data = await response.json();
-            setAnswer(data.answer);
-            setMessages([...messages, { user: userQuery, bot: data.answer }]);
-            setUserQuery('');
-            inputRef.current.focus();
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-    // const user = Cookies.getItem('user');
-    // console.log(user);
+
+
+const handleSend = async (e) => {
+    e.preventDefault();
+    if (!userQuery.trim()) return;
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BACK_END_URL}/message/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userID: user?.userID, // <- Correct usage from cookie
+                message: userQuery,
+            }),
+        });
+
+        const data = await response.json();
+        console.log(data)
+
+        setMessages([...messages, { user: userQuery, bot: data.answer }]);
+        setUserQuery('');
+        inputRef.current.focus();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+
     return (
         <div className="fixed bottom-6 right-6 z-50">
             {isOpen ? (

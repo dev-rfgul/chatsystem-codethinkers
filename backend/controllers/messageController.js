@@ -5,6 +5,7 @@ import UserModel  from '../models/userModel.js'
 export const createMessage = async (req, res) => {
     try {
         const { userID, message } = req.body;
+        console.log("Creating message:", { userID, message });
 
         // 1. Create message
         const newMessage = new MessageModel({ userID, message });
