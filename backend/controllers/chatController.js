@@ -12,7 +12,7 @@ const ADMIN_USER_ID = '684fcdd6757e3b80d4904dea';
 
 export const accessOrCreateChat = async (req, res) => {
   const { senderId } = req.body; // guest's ID
-
+  console.log(senderId)
   if (!senderId) {
     return res.status(400).json({ message: "SenderId is required" });
   }

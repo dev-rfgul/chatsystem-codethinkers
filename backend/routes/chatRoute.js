@@ -14,12 +14,12 @@ import {
 const router = express.Router();
 
 // Chat Routes
-router.post('/chat',  accessOrCreateChat);
-router.get('/chats',  fetchChats);
+router.post('/chat',  accessOrCreateChat);//generate a chatid for a user and admin 
+router.get('/chats',  fetchChats); //fetch all the chats of a user and admin by its chatid
 router.get('/chat/:chatId/messages', getChatMessages);
 
 // Message Routes
-router.post('/message', sendMessage);
-router.get('/messages/:chatId', getAllMessages);
+router.post('/message', sendMessage); //send msg 
+router.get('/messages/:chatId', getAllMessages); //get all messages
 
 export default router;

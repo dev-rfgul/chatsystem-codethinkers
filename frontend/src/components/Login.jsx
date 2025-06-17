@@ -31,7 +31,7 @@ const LoginPage = () => {
                 // localStorage.setItem('token', response.data.token);
                 Cookies.setItem('token', data.token, { expires: 30 })
                 Cookies.setItem('user', JSON.stringify(data.user), { expires: 30 })
-                if (data.user.isAdmin === 'true') {
+                if (data.user.isAdmin) {
                     navigate('/admin')
                 }
             }
