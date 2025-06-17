@@ -59,12 +59,10 @@
 //     console.log(`Server is running on port ${PORT}`);
 // })
 
-
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import http from 'http'; // ✅ use HTTP server
+import http from 'http';
 import { Server } from 'socket.io';
 import { connectDB } from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
@@ -88,10 +86,10 @@ app.use('/user', userRoutes);
 app.use('/message', messageRoutes);
 app.use('/chat', chatRoutes);
 
-// ✅ Create HTTP server manually
+// Create HTTP server
 const server = http.createServer(app);
 
-// ✅ Attach socket.io to the HTTP server
+// Attach socket.io to the HTTP server
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -100,12 +98,13 @@ const io = new Server(server, {
     },
 });
 
-// ✅ Connected users map
+// Connected users map
 const connectedUser = {};
 
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
+    // Handle user joining (matches frontend "join" event)
     socket.on("join", ({ userId, role }) => {
         socket.userId = userId;
         socket.role = role;
@@ -113,6 +112,36 @@ io.on('connection', (socket) => {
         console.log(`User ${userId} with role ${role} joined with socket ID: ${socket.id}`);
     });
 
+    // Handle joining a chat room (matches frontend "join-room" event)
+    socket.on("join-room", (chatID) => {
+        socket.join(chatID);
+        console.log(`Socket ${socket.id} joined room: ${chatID}`);
+    });
+
+    // Handle leaving a chat room (matches frontend "leave-room" event)
+    socket.on("leave-room", (chatID) => {
+        socket.leave(chatID);
+        console.log(`Socket ${socket.id} left room: ${chatID}`);
+    });
+
+    // Handle sending a message (matches frontend "sendMessage" event)
+    socket.on("sendMessage", (messageData) => {
+        console.log(`Message received:`, messageData);
+        
+        const { chatID, message, senderType, receiverId, timestamp } = messageData;
+
+        // Broadcast message to all users in the chat room (matches frontend "receive-message" event)
+        io.to(chatID).emit("receive-message", {
+            message,
+            senderType,
+            timestamp: timestamp || new Date().toISOString(),
+            chatID
+        });
+
+        console.log(`Message broadcasted to room ${chatID}`);
+    });
+
+    // Handle disconnect
     socket.on("disconnect", () => {
         console.log('User disconnected:', socket.id);
         if (socket.userId) {
@@ -122,11 +151,9 @@ io.on('connection', (socket) => {
     });
 });
 
-// ✅ Start the HTTP server (not app.listen)
+// Start the HTTP server
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
 export { io, connectedUser };
-// Exporting io and connectedUser for use in other modules
-// This allows other parts of your application to access the socket.io instance and connected users map.
