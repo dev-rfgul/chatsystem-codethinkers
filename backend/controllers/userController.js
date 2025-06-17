@@ -36,12 +36,12 @@ export const registerUser = async (req, res) => {
             email,
             password: hashedPassword,
             isAdmin: isAdmin || false,
-            
+
         });
 
         res.status(201).json({
             message: 'User registered successfully',
-            user: { uuid: newUser.uuid, name: newUser.name, email: newUser.email,userID:newUser._id }
+            user: { uuid: newUser.uuid, name: newUser.name, email: newUser.email, userID: newUser._id }
         });
     } catch (err) {
         // console.log(err);
@@ -88,7 +88,7 @@ export const getUserByID = async (req, res) => {
         console.log(user)
         if (!user) return res.status(404).json({ message: 'User not found' });
         console.log(user)
-        res.json(user);
+        res.status(200).json({ message: 'User found', user });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
