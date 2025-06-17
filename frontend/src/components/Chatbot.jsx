@@ -271,7 +271,7 @@
 //                 message: currentMessage,
 //                 senderType: 'user',
 //             });
-            
+
 //             const data = await res.json();
 //             console.log("Send message response:", data);
 
@@ -705,19 +705,16 @@ const ChatPopup = () => {
                 throw new Error(`HTTP error! status: ${res.status}`);
             }
 
-            // Emit socket event to admin
-            const socket = socketRef.current;
-            if (socket) {
-                socket.emit('send-message', {
-                    chatID,
-                    message: currentMessage,
-                    senderType: 'user',
-                    receiverId: 'admin',
-                    timestamp: new Date().toLocaleString()
-                });
-                console.log('Message sent via socket:', currentMessage);
-            }
-            
+            const messageData = {
+                chatID: chatID,
+                message: currentMessage,
+                senderType: "user",
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Emit to socket
+            socketRef.current.emit("sendMessage", messageData);
+
             const data = await res.json();
             console.log("Send message response:", data);
 
@@ -800,13 +797,12 @@ const ChatPopup = () => {
                                         className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                     >
                                         <div
-                                            className={`p-3 rounded-lg max-w-xs lg:max-w-md ${
-                                                msg.sender === 'user'
-                                                    ? 'bg-blue-600 text-white'
-                                                    : msg.sender === 'admin' 
-                                                        ? 'bg-green-600 text-white'
-                                                        : 'bg-gray-700 text-gray-100'
-                                            }`}
+                                            className={`p-3 rounded-lg max-w-xs lg:max-w-md ${msg.sender === 'user'
+                                                ? 'bg-blue-600 text-white'
+                                                : msg.sender === 'admin'
+                                                    ? 'bg-green-600 text-white'
+                                                    : 'bg-gray-700 text-gray-100'
+                                                }`}
                                         >
                                             <p className="text-sm">{msg.content}</p>
                                             <p className="text-xs opacity-70 mt-2">

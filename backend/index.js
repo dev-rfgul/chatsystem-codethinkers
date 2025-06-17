@@ -127,8 +127,8 @@ io.on('connection', (socket) => {
     // Handle sending a message (matches frontend "sendMessage" event)
     socket.on("sendMessage", (messageData) => {
         console.log(`Message received:`, messageData);
-        
-        const { chatID, message, senderType, receiverId, timestamp } = messageData;
+
+        const { chatID, message, senderType, timestamp } = messageData;
 
         // Broadcast message to all users in the chat room (matches frontend "receive-message" event)
         io.to(chatID).emit("receive-message", {

@@ -389,24 +389,14 @@ const Admin = () => {
             socket.emit("join", { userId: "admin", role: "admin" });
         });
 
-   socket.on("receive-message", (msg) => {
-    console.log("Admin received message:", msg);
-
-    // Only push the message if it's from the current room
-    if (msg.chatID === currentRoomRef.current) {
-        setChatMessages(prev => [
-            ...prev,
-            {
+        socket.on("receive-message", (msg) => {
+            console.log("Admin received message:", msg);
+            setChatMessages(prev => [...prev, {
                 content: msg.message,
                 sender: msg.senderType || 'user',
                 timestamp: msg.timestamp || new Date().toLocaleString()
-            }
-        ]);
-    } else {
-        console.log("Received message for another room:", msg.chatID);
-    }
-});
-
+            }]);
+        });
 
         socket.on("disconnect", () => {
             console.log("Admin disconnected");
@@ -485,6 +475,7 @@ const Admin = () => {
 
     const handleUserClick = (user) => {
         setSelectedUser(user);
+        setChatMessages([]); 
         fetchUserMessages(user.chatID);
         setNewMessage('');
         setError('');
