@@ -229,7 +229,7 @@ const handleSendMessage = async () => {
                                     <h2 className="text-xl font-bold text-blue-300">{selectedUser.name}</h2>
                                     <p className="text-sm text-gray-400">{selectedUser.email}</p>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
 
                         {/* Messages area */}
