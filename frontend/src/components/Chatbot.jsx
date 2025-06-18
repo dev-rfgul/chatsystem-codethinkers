@@ -100,7 +100,7 @@ const ChatPopup = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [chatMessages]);
+    }, [chatMessages ,isOpen]);
 
     useEffect(() => {
         if (user?.userID) {
