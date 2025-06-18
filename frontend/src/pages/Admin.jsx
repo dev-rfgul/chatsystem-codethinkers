@@ -515,7 +515,7 @@ const Admin = () => {
                 sender: 'admin',
                 timestamp: new Date().toLocaleString(),
             };
-            setChatMessages(prev => [...prev, sentMsg]);
+            // setChatMessages(prev => [...prev, sentMsg]);
             
             setNewMessage('');
             setSuccess('Message sent successfully!');
