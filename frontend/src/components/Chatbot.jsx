@@ -37,7 +37,7 @@ const ChatPopup = () => {
             console.log("User received message from admin:", msg);
             setChatMessages(prev => [...prev, {
                 content: msg.message,
-                sender: msg.senderType || 'admin',
+                sender: msg.senderType || 'user',
                 timestamp: msg.timestamp || new Date().toLocaleString()
             }]);
         });
@@ -62,7 +62,7 @@ const ChatPopup = () => {
             // Join as user
             socket.emit("join", { userId: user._id, role: "user" });
             // Join chat room
-            socket.emit("join-room", chatID);
+            socket.emit("join-room", chatID);    
             console.log("User joined room:", chatID);
         }
     }, [user, chatID]);
@@ -100,7 +100,7 @@ const ChatPopup = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [chatMessages ,isOpen]);
+    }, [chatMessages, isOpen]);
 
     useEffect(() => {
         if (user?.userID) {
@@ -224,9 +224,9 @@ const ChatPopup = () => {
             setError("Failed to fetch user data. Please try again.");
         }
     };
-useEffect(() => {
-    if (isOpen) inputRef.current?.focus();
-}, [isOpen]);
+    useEffect(() => {
+        if (isOpen) inputRef.current?.focus();
+    }, [isOpen]);
 
     const fetchUserMessages = async (chatID) => {
         if (!chatID) return;
